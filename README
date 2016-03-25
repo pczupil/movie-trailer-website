@@ -1,0 +1,28 @@
+### README ###
+
+Included files:
+    - ent_center.py:     The project executable, builds a list of Movie objects
+                         and calls open_movies_page() from fresh_tomatoes.py.
+
+    - fresh_tomatoes.py: Creates and fills an html document with Movie data
+                         created from ent_center.py.
+
+    - media.py:          Module that declares the Movie class (among others).
+
+To run, unzip the project. On the command-line, navigate to the folder you have
+unzipped the project to and type (without the apostrophes):
+    `python2 ent_center.py`
+
+About:
+    The project uses the provided "fresh_tomatoes.py" file to generate an HTML
+    file that displays a grid of movie posters, along with other information
+    about the movies. Clicking on a poster will bring up the movie's trailer (via
+    youtube). Clicking on a movie's "storyline" button will replace the poster
+    with some text briefly describing the film's storyline. The poster is
+    brought back by clicking the movie's "poster" button. The movies can be
+    sorted by clicking the sort button in the upper right corner and selecting
+    which an order to sort the movies by (the sorting is done by using two movie
+    lists, whose ordering differs, and rendering them in two separate bootstrap
+    containers). Clicking on "About Site" will replace the movie-tiles with this
+    text. To bring back the movie-tiles, click on "Fresh Tomatoes Movie Trailers"
+    in the navbar.

@@ -59,6 +59,22 @@ main_page_head = '''
 
     </style>
     <script type="text/javascript" charset="utf-8">
+        // When the "Storyline" button is pressed, hide movie poster, director etc.
+        // and show the movie's storyline text instead.
+        $(document).on('click', '.movie-tile > #storyline-btn', function(){
+            $(this).hide("slow", function() {
+                $(this).siblings().hide("fast");
+                $(this).siblings("#storyline, button").show("slow")
+            });
+        });
+        // When the poster button is clicked, hide the storyline text and
+        // bring back the poster, director etc. for showing to the user.
+        $(document).on('click', '.movie-tile > #poster-btn', function(){
+            $(this).hide("slow", function() {
+                $(this).siblings("#storyline, #poster-btn").hide("fast");
+                $(this).siblings("#movie-trailer, #storyline-btn").show("slow")
+            });
+        });
         // Pause the video when the modal is closed
         $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
             // Remove the src so the player itself gets removed, as this is the only
@@ -67,7 +83,7 @@ main_page_head = '''
         });
 
         // Start playing the video whenever the trailer modal is opened
-        $(document).on('click', '.movie-tile #movie-trailer', function (event) {
+        $(document).on('click', '.movie-tile div', function (event) {
             var trailerYouTubeId = $(this).attr('data-trailer-youtube-id')
             var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
             $("#trailer-video-container").empty().append($("<iframe></iframe>", {
@@ -86,19 +102,24 @@ main_page_head = '''
         });
 
         // When a sorting link is pressed, hide current films and animate in
-        // the movie tiles in a new order.
+        // the  ascending/descending order movie tiles.
         $(document).on('click', '#asc', function () {
+          $('#about-text').hide('fast')
           $('.movie-tile').hide('fast')
           $('#movie_tiles_sorted .movie-tile').hide().first().show("fast", function showNext() {
             $(this).next("div").show("fast", showNext);
           });
         });
-
-        $(document).on('click', '#desc', function () {
+        $(document).on('click', '#desc, #home', function () {
+          $('#about-text').hide('fast')
           $('.movie-tile').hide('fast')
           $('#movie_tiles_rev .movie-tile').hide().first().show("fast", function showNext() {
             $(this).next("div").show("fast", showNext);
           });
+        });
+        $(document).on('click', '#about', function () {
+          $('.movie-tile').hide('fast')
+          $('#about-text').show('fast')
         });
     </script>
 </head>
@@ -126,8 +147,10 @@ main_page_content = '''
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
           <div class="navbar-header">
-            <a class="navbar-brand" href="#"
+            <a class="navbar-brand" href="#" id="home"
             color="#BBB">Fresh Tomatoes Movie Trailers</a>
+            <a class="navbar-brand" href="#" id="about"
+            color="#BBB">About Site</a>
           </div>
           <div class="dropdown btn-group pull-right">
             <button class="btn btn-primary dropdown-toggle"
@@ -135,9 +158,8 @@ main_page_content = '''
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
               <li><a href="#" id="desc">TITLE(DESC)</a></li>
-              <li><a href="#"  id="asc">TITLE(ASC)</a></li>
               <li class="divider"></li>
-              <li><a href="#">About Site</a></li>
+              <li><a href="#"  id="asc">TITLE(ASC)</a></li>
           </div>
         </div>
       </div>
@@ -148,6 +170,21 @@ main_page_content = '''
     <div class="container" id="movie_tiles_sorted">
       {movie_tiles_sorted}
     </div>
+    <div class="container" id="about-site">
+      <p id="about-text" style="display:none">The project uses the provided
+      "fresh_tomatoes.py" file to generate an HTML
+      file that displays a grid of movie posters, along with other information
+      about the movies. Clicking on a poster will bring up the movie's trailer (via
+      youtube). Clicking on a movie's "storyline" button will replace the poster
+      with some text briefly describing the film's storyline. The poster is
+      brought back by clicking the movie's "poster" button. The movies can be
+      sorted by clicking the sort button in the upper right corner and selecting
+      which an order to sort the movies by (the sorting is done by using two movie
+      lists, whose ordering differs, and rendering them in two separate bootstrap
+      containers). Clicking on "About Site" will replace the movie-tiles with this
+      text. To bring back the movie-tiles, click on "Fresh Tomatoes Movie Trailers"
+      in the navbar.</p>
+    </div>
   </body>
 </html>
 '''
@@ -156,16 +193,20 @@ main_page_content = '''
 # A single movie entry html template
 movie_tile_content = '''
 <div class="col-md-6 col-lg-4 movie-tile text-center">
-  <div id="movie-trailer" data-trailer-youtube-id="{trailer_youtube_id}" data-toggle="modal" data-target="#trailer">
-      <img src="{poster_image_url}" width="220" height="342">
-      <h2>{movie_title}</h2>
-      <h4>Directed by</h5>
-      <h3>{director}</h4>
+  <div id="movie-trailer" data-trailer-youtube-id="{trailer_youtube_id}"
+  data-toggle="modal" data-target="#trailer">
+    <img src="{poster_image_url}" width="220" height="342">
+    <h2>{movie_title}</h2>
+    <h4>Directed by</h5>
+    <h3>{director}</h4>
   </div>
-  <div id="storyline" hidden>
-      <p>{movie_storyline}</p>
+  <div id="storyline" style="display:none" data-trailer-youtube-id="{trailer_youtube_id}"
+  data-toggle="modal" data-target="#trailer">
+    <h2>{movie_title}</h2>
+    <p>{movie_storyline}</p>
   </div>
-  <button class="btn btn-primary" class="storyline-btn">Storyline</button>
+  <button class="btn btn-primary" id="storyline-btn">Storyline</button>
+  <button class="btn btn-primary" id="poster-btn" style="display:none">Poster</button>
 </div>
 '''
 
